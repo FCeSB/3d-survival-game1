@@ -12,9 +12,9 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField] private Transform cameraTarget;
 
-    [SerializeField] private float topClump=90.0f;
+    [SerializeField] private float topClamp=90.0f;
 
-    [SerializeField] private float bottomClump=-90.0f;
+    [SerializeField] private float bottomClamp=-90.0f;
 
     private float mouseX;
     private float mouseY;
@@ -44,11 +44,21 @@ public class PlayerMove : MonoBehaviour
         {
             cineMachineTargetPitch+=mouseY*rotationSpeed*-1;
             rotationVelocity=mouseX*rotationSpeed;
+
+            cineMachineTargetPitch=ClampAngle(cineMachineTargetPitch,bottomClamp,topClamp);
+            cameraTarget.localRotation=Quaternion.Euler(cineMachineTargetPitch,0.0f,0.0f);
+            transform.Rotate(Vector3.up*rotationVelocity);
         }
 
         Vector3 MoveDirection=transform.TransformDirection(inputDir)*speed;
         MoveDirection.y=inputDir.y;
         controller.Move(MoveDirection*Time.deltaTime);        
                 
+    }
+    private float ClampAngle(float lfAngle,float lfMin, float lfMax)
+    {
+        if(lfAngle< -360f) lfAngle+=360f;
+        if(lfAngle> 360f) lfAngle-=360f;
+        return Mathf.Clamp(lfAngle,lfMin,lfMax);
     }
 }
